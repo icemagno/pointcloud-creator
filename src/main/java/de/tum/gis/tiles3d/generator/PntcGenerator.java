@@ -91,7 +91,7 @@ public class PntcGenerator {
 			try {
 			    sourceCrs = CRS.decode("EPSG:" + config.getSrid() );
 			    targetCrs = CRS.decode("EPSG:" + config.getTargetSrid() );
-			    mathTransform = CRS.findMathTransform(sourceCrs, targetCrs, true);
+			    mathTransform = CRS.findMathTransform(sourceCrs, targetCrs, false);
 			} catch ( Exception e ) {
 				Logger.error("Cannot reproject.");
 				Logger.error( e.getMessage() );
@@ -243,18 +243,16 @@ public class PntcGenerator {
 					    y = destDirectPosition2D.y;
 					}
 					
-					if (Double.valueOf(valueArray[2]) < minZ)
-						minZ = Double.valueOf(valueArray[2]);
+					if (Double.valueOf(valueArray[2]) < minZ) minZ = Double.valueOf(valueArray[2]);
 					
 					int colorScaleFactor = 1;
-					if (config.getColorBitSize() == 16)
-						colorScaleFactor = 256;
+					if (config.getColorBitSize() == 16)	colorScaleFactor = 256;
 					
 					int r = Integer.valueOf(valueArray[3]) / colorScaleFactor;
 					int g = Integer.valueOf(valueArray[4]) / colorScaleFactor;
 					int b = Integer.valueOf(valueArray[5]) / colorScaleFactor;	
 					
-					batchPointList.add(new PointObject(x, y, z, r, g, b, config.getSrid()));
+					batchPointList.add( new PointObject(x, y, z, r, g, b, config.getSrid() ) );
 					
 					if (batchPointList.size() % SqliteDBManager.batchInsertionSize == 0) {
 						dbManager.importIntoDatabase(batchPointList);
@@ -417,7 +415,7 @@ public class PntcGenerator {
 		
 		AbstractTileContent tileContent = tile.getContent();
 		if (tileContent != null) {
-			tileJS.add("content", Json.object().add("url", tile.getContentUrl()));
+			tileJS.add("content", Json.object().add("uri", tile.getContentUrl()));
 			
 			AbstractBoundingVolume boundingVolume = null;
 			if (tileContent instanceof TileSet) {

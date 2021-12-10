@@ -160,6 +160,10 @@ public class PntcTileCreator extends DefaultWorkerImpl<PntcTileWork>{
 		writeBinaryFile(outputByte, pntsFilepath);
 	}
 	
+	private double getRandomNumber(double min, double max) {
+	    return ( ( Math.random() * (max - min) ) + min );
+	}	
+	
 	private String generateFeatureTableJSON(Coordinate origin, int pointNumber, int spaceNumber) 
 			throws IOException {
 		
@@ -171,14 +175,17 @@ public class PntcTileCreator extends DefaultWorkerImpl<PntcTileWork>{
 		}
 		sb.append(",").append(origin.y).append(",").append(origin.z).append("],");
 		sb.append("\"POSITION\":").append("{\"byteOffset\":").append(0).append("},");
+		
 		sb.append("\"RGB\":").append("{\"byteOffset\":").append(pointNumber*12).append("}}");
+		
+		//sb.append(",\"temperature\":").append( getRandomNumber(1.0, 250.0) );
+		
 		
 		int headerByteLength = sb.toString().getBytes().length;
 		int paddingSize = headerByteLength%4;
 		
 		// adjust byte alignment...
-		if (paddingSize != 0)
-			return generateFeatureTableJSON(origin, pointNumber, 4 - paddingSize).toString();
+		if (paddingSize != 0) return generateFeatureTableJSON(origin, pointNumber, 4 - paddingSize).toString();
 					
 		return sb.toString();
 	}

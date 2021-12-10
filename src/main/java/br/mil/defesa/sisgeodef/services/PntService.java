@@ -1,5 +1,7 @@
 package br.mil.defesa.sisgeodef.services;
 
+import java.io.File;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
@@ -27,16 +29,18 @@ public class PntService {
 		config.setInputPath( "/pointsource" ) ;
 		config.setSrid( "2994" );
 		config.setTargetSrid( "4326" );
-		config.setMustReproject( true );
+		config.setMustReproject( false );
 		config.setSeparatorCharacter( " " );
 		config.setColorBitSize( 16 );
-		config.setZScaleFactor( 1 );
+		config.setZScaleFactor( 0.3 );
 		config.setTileSize( 100 );
-		config.setMaxNumOfPointsPerTile( 1000 );
+		config.setMaxNumOfPointsPerTile( 10000 );
 		config.setOutputFolderPath( "/pointdata" );
-		config.setRefinamentModel( Refine.ADD );
-		config.setzOffset( 4000 );
+		config.setRefinamentModel( Refine.REPLACE );
+		config.setzOffset( 0 );
 		
+		new File( config.getInputPath() ).mkdirs();
+		new File( config.getOutputFolderPath() ).mkdirs();
 		
 		SqliteDBManagerFactory dbManagerFactory = new SqliteDBManagerFactory(config);
 		final PntcGenerator generator = new PntcGenerator(config, dbManagerFactory);	

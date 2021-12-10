@@ -24,6 +24,7 @@
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 		<maven.test.skip>true</maven.test.skip>
+		<geotools.version>21.0</geotools.version>
 	</properties>
 	
 
@@ -57,31 +58,31 @@
 		<dependency>
 		    <groupId>org.geotools</groupId>
 		    <artifactId>gt-epsg-hsql</artifactId>
-		    <version>10.5</version>
+		    <version>${geotools.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.geotools/gt-main -->
 		<dependency>
 		    <groupId>org.geotools</groupId>
 		    <artifactId>gt-main</artifactId>
-		    <version>10.5</version>
+		    <version>${geotools.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.geotools/gt-metadata -->
 		<dependency>
 		    <groupId>org.geotools</groupId>
 		    <artifactId>gt-metadata</artifactId>
-		    <version>10.5</version>
+		    <version>${geotools.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.geotools/gt-opengis -->
 		<dependency>
 		    <groupId>org.geotools</groupId>
 		    <artifactId>gt-opengis</artifactId>
-		    <version>10.5</version>
+		    <version>${geotools.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.geotools/gt-referencing -->
 		<dependency>
 		    <groupId>org.geotools</groupId>
 		    <artifactId>gt-referencing</artifactId>
-		    <version>10.5</version>
+		    <version>${geotools.version}</version>
 		</dependency>
 			
 			
@@ -181,29 +182,32 @@
 
 	<repositories>
 
-
 	    
 	    <repository> 
 	        <id>geosolutions.repository</id> 
 	        <name>Geosolutions Repository</name> 
 	        <url>http://maven.geo-solutions.it/</url> 
 	    </repository>
-	    	
-    <repository>
-        <id>osgeo</id>
-        <name>Open Source Geospatial Foundation Repository</name>
-        <url>https://repo.osgeo.org/repository/release</url>
-    </repository>
-    
-    <repository> <!--Add the snapshot repository here-->
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <id>opengeo</id>
-        <name>OpenGeo Maven Repository</name>
-        <url>http://repo.opengeo.org</url>
-    </repository>
-	    
+	    <repository>
+	        <id>osgeo</id>
+	        <name>Open Source Geospatial Foundation Repository</name>
+	        <url>https://repo.osgeo.org/repository/release</url>
+	    </repository>
+	    <repository>
+	        <id>osgeo-snap</id>
+	        <name>Open Source Geospatial Foundation Repository Snapshot</name>
+	        <url>https://repo.osgeo.org/repository/snapshot</url>
+	    </repository>
+		<repository>      
+		  <id>geotools</id>
+		  <name>Geotools repository</name>
+		  <url>https://repo.osgeo.org/repository/geotools-releases/</url>
+		</repository>  
+
+
+
+
+		  
 	    <repository> 
 	        <id>repository.spring.release</id> 
 	        <name>Spring GA Repository</name> 

@@ -1,0 +1,65 @@
+
+addStyle("Color Ramp", {
+  color: {
+    conditions: [
+      ["${temperature} < 0.1", "color('#000099')"],
+      ["${temperature} < 0.2", "color('#00cc99', 1.0)"],
+      ["${temperature} < 0.3", "color('#66ff33', 0.5)"],
+      ["${temperature} < 0.4", "rgba(255, 255, 0, 0.1)"],
+      ["${temperature} < 0.5", "rgb(255, 128, 0)"],
+      ["${temperature} < 0.6", "color('red')"],
+      ["${temperature} < 0.7", "color('rgb(255, 102, 102)')"],
+      ["${temperature} < 0.8", "hsl(0.875, 1.0, 0.6)"],
+      ["${temperature} < 0.9", "hsla(0.83, 1.0, 0.5, 0.1)"],
+      ["true", "color('#FFFFFF', 1.0)"],
+    ],
+  },
+});
+
+
+
+
+classificationTileset.style = new Cesium.Cesium3DTileStyle({
+  color: {
+    conditions: [
+      ["${id} === 'roof1'", "color('#004FFF', 0.5)"],
+      ["${id} === 'towerBottom1'", "color('#33BB66', 0.5)"],
+      ["${id} === 'towerTop1'", "color('#0099AA', 0.5)"],
+      ["${id} === 'roof2'", "color('#004FFF', 0.5)"],
+      ["${id} === 'tower3'", "color('#FF8833', 0.5)"],
+      ["${id} === 'tower4'", "color('#FFAA22', 0.5)"],
+      ["true", "color('#FFFF00', 0.5)"],
+    ],
+  },
+});
+
+
+
+osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+  defines: {
+    distanceFromComplex:
+      "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(144.96007, -37.82249))",
+  },
+  color: {
+    conditions: [
+      ["${distanceFromComplex} > 0.010", "color('#d65c5c')"],
+      ["${distanceFromComplex} > 0.006", "color('#f58971')"],
+      ["${distanceFromComplex} > 0.002", "color('#f5af71')"],
+      ["${distanceFromComplex} > 0.0001", "color('#f5ec71')"],
+      ["true", "color('#ffffff')"],
+    ],
+  },
+});
+
+
+pointCloudTileset.style = new Cesium.Cesium3DTileStyle({
+  color: {
+    conditions: [
+      ["${Classification} === 2", "color('brown')"],       // ground
+      ["${Classification} === 3", "color('greenyellow')"], // low vegetation
+      ["${Classification} === 4", "color('green')"],       // medium vegetation
+      ["${Classification} === 5", "color('darkgreen')"],   // high vegetation
+      ["true", "color('white')"]
+    ]
+  }
+});

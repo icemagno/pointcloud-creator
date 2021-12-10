@@ -195,8 +195,7 @@ public class SqliteDBManager implements DBManager {
 	        	double y = result.getDouble("y");
 	        	double z = result.getDouble("z");  
 	        	Coordinate inputCoordinate = new Coordinate(x, y, z);
-				Coordinate ecefCoordinate = CoordianteConverter.convertPointToWGS84Cartesian(
-						inputCoordinate, config.getSrid());	
+				Coordinate ecefCoordinate = CoordianteConverter.convertPointToWGS84Cartesian( inputCoordinate, config.getSrid() );	
 				coordinateList.add(ecefCoordinate);
 				
 	        	if (z < minZ)
