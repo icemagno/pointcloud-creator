@@ -127,12 +127,14 @@
 
 	var tileset = new Cesium.Cesium3DTileset({
 		url: 'pointdata/tileset.json',
-		maximumScreenSpaceError : 18,
-		eyeDomeLightingStrength : 1.0,
-		eyeDomeLightingRadius : 1.0
+		maximumScreenSpaceError : 1.8,
+		eyeDomeLightingStrength : 0.5,
+		eyeDomeLightingRadius : 1.0,
+		skipLevelOfDetail : true,
+		
 		/*
 		maximumScreenSpaceError: 128,
-		skipLevelOfDetail : true,
+		
 		baseScreenSpaceError : 1024,
 		skipScreenSpaceErrorFactor : 16,
 		skipLevels : 1,
@@ -143,8 +145,8 @@
 	});
     //tileset.pointCloudShading.maximumAttenuation = undefined; // Will be based on maximumScreenSpaceError instead
     //tileset.pointCloudShading.baseResolution = undefined;
-    tileset.pointCloudShading.geometricErrorScale = 1.0;
-    //tileset.pointCloudShading.attenuation = true;
+    tileset.pointCloudShading.geometricErrorScale = 0.2;
+    tileset.pointCloudShading.attenuation = true;
     tileset.pointCloudShading.eyeDomeLighting = true;
 
 	
@@ -172,18 +174,11 @@
 */
 	
 	tileset.readyPromise.then(function(tileset) {
-		console.log('Ok');
-		console.log( tileset );
-		
-		var properties = tileset.properties;
-		if (Cesium.defined(properties)) {
-			for (var name in properties) {
-				console.log(properties[name]);
-			}
-		}
-	});
-	
-	
+		tileset._geometricError = 1000000000.0;
+		window.setTimeout(function() {
+			tileset._root._content._pointSize = 100.0;
+		}, 500);
+	});	
 	
 	var pp = viewer.scene.primitives.add(tileset);	
 	
