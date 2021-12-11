@@ -222,8 +222,6 @@ public class PntcTileCreator extends DefaultWorkerImpl<PntcTileWork>{
 		// adjust byte alignment...
 		if (paddingSize != 0) return generateBatchTableJSON(4 - paddingSize).toString();
 		
-		System.out.println( sb.toString() );
-		
 		return sb.toString();		
 	}
 	
