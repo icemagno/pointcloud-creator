@@ -146,9 +146,9 @@ public class PntcGenerator {
 			throw new PntcGenerationException("Failed to construct 3D-Tiles data structure.", e);
 		}
 
-		totalNumberOfTiles = new AtomicInteger(tileset.calculateNumberOfChildrenTiles());
+		totalNumberOfTiles = new AtomicInteger(tileset.calculateNumberOfChildrenTiles() );
 		int minThreads = 2;
-		int maxThreads = Math.max(minThreads, Runtime.getRuntime().availableProcessors());		
+		int maxThreads = Math.max(minThreads, Runtime.getRuntime().availableProcessors() );		
 		
 		Logger.info("Writing data contents to the created file folder");	
 		tileCreatorPool = new WorkerPool<PntcTileWork>(
@@ -204,6 +204,7 @@ public class PntcGenerator {
 		tileCreatorPool.addWork(new PntcTileWork((PointCloudModel) rootTile.getContent()));
 	}
 	
+	/*
 	private DirectPosition2D reproject( double x, double y ) {
 		DirectPosition2D destDirectPosition2D = new DirectPosition2D();
 		try {
@@ -214,6 +215,7 @@ public class PntcGenerator {
 		}
 		return destDirectPosition2D;
 	}
+	*/
 	
 	private void readSourcePointData() throws IOException, SQLException {
 		File dataFolder = new File(config.getInputPath());
@@ -237,11 +239,13 @@ public class PntcGenerator {
 					double y = Double.valueOf(valueArray[1]);
 					double z = (Double.valueOf(valueArray[2]) + config.getzOffset()) * config.getZScaleFactor();
 					
+					/*
 					if( config.getMustReproject() ) {
 						DirectPosition2D destDirectPosition2D = reproject( x, y );
 					    x = destDirectPosition2D.x;
 					    y = destDirectPosition2D.y;
 					}
+					*/
 					
 					if (Double.valueOf(valueArray[2]) < minZ) minZ = Double.valueOf(valueArray[2]);
 					

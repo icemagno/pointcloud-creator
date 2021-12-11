@@ -73,8 +73,7 @@ public class PntcTileCreator extends DefaultWorkerImpl<PntcTileWork>{
 		
 		// query point object information (XZY and RGB) from database
 		PntcQueryResult queryResult = dbManager.queryPointEntities(pntModel);
-		if (queryResult == null)
-			return;
+		if (queryResult == null) return;
 		
 		List<Coordinate> coordinateList = queryResult.getCoordinateList();
 		List<Color> colorList = queryResult.getColorList();
@@ -116,47 +115,90 @@ public class PntcTileCreator extends DefaultWorkerImpl<PntcTileWork>{
 		}
 		
 		byte[] positionByte = CharacterConverter.convertToByteArray(coordinateArray);
-				
+
+		// --------------------------------------------------------------------------------------------
+		// Generate temperature attribute array and store in a Batch table binary 
+		byte[] batchTableBinary = new byte[pointNumber];
+		for (int i = 0; i < pointNumber; i++) {
+			batchTableBinary[i] = (byte)getRandomNumber(0.0, 250.0);
+		}
+		// Convert the Batch table binary data to byte array
+		byte[] batchTableBinaryByte = batchTableBinary; //CharacterConverter.convertToByteArray(batchTableBinary);
+		// --------------------------------------------------------------------------------------------
+		
+		// Take the Feature table JSON header 
 		String featureTableJSONString = generateFeatureTableJSON(origin, pointNumber, 0);
-		int featureTableJSONLength = featureTableJSONString.length();
+		// Convert the Feature table JSON header to byte array
 		byte[] featureTableJSONByte = featureTableJSONString.getBytes();
 
-		// Create Header
+		// Take the Feature table JSON header
+		String batchTableJSONString = generateBatchTableJSON( 0 );
+		// Convert the Feature table JSON header to byte array
+		byte[] batchTableJSONByte = batchTableJSONString.getBytes();
+		
+		
+		
+		// Compute Sizes
+
+		// Size of Feature table JSON header
+		int featureTableJSONLength = featureTableJSONString.length();
+		// Convert Feature table JSON header size to byte array
+		byte[] featureTableJSONByteLength = CharacterConverter.convertToByteArray(featureTableJSONLength);
+		
+		// Size of Feature table binary data
+		int featureTableBinaryByteLength = positionByte.length + colorArray.length;
+		// Convert Feature table binary data size to byte array
+		byte[] featureTableBinaryByteLengthByte = CharacterConverter.convertToByteArray(featureTableBinaryByteLength);
+		
+		// Size of Batch table JSON header
+		int batchTableJSONLength = batchTableJSONString.length();
+		// Convert the Batch table JSON header to byte array
+		byte[] batchTableJSONByteLength = CharacterConverter.convertToByteArray(batchTableJSONLength);
+		
+		// Size of Batch table binary body
+		int batchTableBinaryByteLength = batchTableBinaryByte.length;
+		// Convert Batch table binary body to byte array
+		byte[] batchTableBinaryByteLengthByte = CharacterConverter.convertToByteArray(batchTableBinaryByteLength);		
+		
+		// Make room to the tile data
 		byte[] outputByte = new byte[0];
+		
+		// Create Header data
+		// Magic
 		String magic = "pnts";
 		byte[] magicByte = magic.getBytes();
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, magicByte);
 
+		// Version
 		int version = Integer.valueOf("1");
 		byte[] versionByte = CharacterConverter.convertToByteArray(version);
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, versionByte);
 
-		int byteLength = 28 + featureTableJSONLength + positionByte.length;
-		byte[] byteLengthByte = CharacterConverter.convertToByteArray(byteLength);
+		// Tile total size
+		// Header size itself(28 bytes) plus JSON headers sizes (Feature table and Batch table) plus Binary data sizes (Feature table and Batch table)
+		int tileTotalSize = 28 + featureTableJSONLength + featureTableBinaryByteLength + batchTableJSONLength + batchTableBinaryByteLength;
+		byte[] byteLengthByte = CharacterConverter.convertToByteArray(tileTotalSize);
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, byteLengthByte);
 
-		int featureTableJSONByteLength = featureTableJSONLength;
-		byte[] featureTableJSONByteLengthByte = CharacterConverter.convertToByteArray(featureTableJSONByteLength);
-		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, featureTableJSONByteLengthByte);
-
-		int featureTableBinaryByteLength = positionByte.length + colorArray.length;
-		byte[] featureTableBinaryByteLengthByte = CharacterConverter.convertToByteArray(featureTableBinaryByteLength);
+		// Add the Feature Table JSON header size
+		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, featureTableJSONByteLength);
+		// Add the Feature Table binary body size
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, featureTableBinaryByteLengthByte);
-
-		int batchTableJSONByteLength = 0;
-		byte[] batchTableJSONByteLengthByte = CharacterConverter.convertToByteArray(batchTableJSONByteLength);
-		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, batchTableJSONByteLengthByte);
-
-		int batchTableBinaryByteLength = 0;
-		byte[] batchTableBinaryByteLengthByte = CharacterConverter.convertToByteArray(batchTableBinaryByteLength);
+		
+		// Add the Batch Table JSON header size
+		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, batchTableJSONByteLength);
+		// Add the Batch Table binary body size
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, batchTableBinaryByteLengthByte);	
 		
-		// Create Feature Table
+		// add Feature Table data ( header and binary ) to tile body
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, featureTableJSONByte);
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, positionByte);		
 		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, colorArray);
+		// add Batch Table data ( header and binary ) to tile body
+		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, batchTableJSONByte);
+		outputByte = CharacterConverter.concatTwoByteArrays(outputByte, batchTableBinaryByte);
 
-		// write to binary file
+		// write all to binary file
 		writeBinaryFile(outputByte, pntsFilepath);
 	}
 	
@@ -164,22 +206,40 @@ public class PntcTileCreator extends DefaultWorkerImpl<PntcTileWork>{
 	    return ( ( Math.random() * (max - min) ) + min );
 	}	
 	
-	private String generateFeatureTableJSON(Coordinate origin, int pointNumber, int spaceNumber) 
-			throws IOException {
+	private String generateBatchTableJSON( int spaceNumber ) throws IOException {
+		StringBuilder sb= new StringBuilder();
+		
+		sb.append("{\"temperature\":").append("{\"byteOffset\":").append(0).append(",");
+		sb.append("\"componentType\":").append("\"BYTE\"").append(",");
+		sb.append("\"type\":").append("\"SCALAR\"").append("}}");
+		
+		for (int i = 1; i <= spaceNumber; i++) {
+			sb.append(" ");
+		}		
+		
+		int headerByteLength = sb.toString().getBytes().length;
+		int paddingSize = headerByteLength%4;
+		// adjust byte alignment...
+		if (paddingSize != 0) return generateBatchTableJSON(4 - paddingSize).toString();
+		
+		System.out.println( sb.toString() );
+		
+		return sb.toString();		
+	}
+	
+	private String generateFeatureTableJSON(Coordinate origin, int pointNumber, int spaceNumber) throws IOException {
 		
 		StringBuilder sb= new StringBuilder();
 		sb.append("{\"POINTS_LENGTH\":").append(pointNumber).append(",");
 		sb.append("\"RTC_CENTER\":[").append(origin.x);
-		for (int i = 1; i <= spaceNumber; i++) {
-			sb.append(0);
-		}
 		sb.append(",").append(origin.y).append(",").append(origin.z).append("],");
 		sb.append("\"POSITION\":").append("{\"byteOffset\":").append(0).append("},");
-		
 		sb.append("\"RGB\":").append("{\"byteOffset\":").append(pointNumber*12).append("}}");
 		
-		//sb.append(",\"temperature\":").append( getRandomNumber(1.0, 250.0) );
-		
+		for (int i = 1; i <= spaceNumber; i++) {
+			sb.append(" ");
+		}
+
 		
 		int headerByteLength = sb.toString().getBytes().length;
 		int paddingSize = headerByteLength%4;
