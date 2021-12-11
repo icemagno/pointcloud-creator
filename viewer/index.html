@@ -77,16 +77,17 @@
 	var initialPosition = Cesium.Cartesian3.fromRadians(center.longitude, center.latitude, 1150000);
 	var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
 	
+	/*
 	scene.camera.setView({
 	    destination: initialPosition,
 	    orientation: initialOrientation,
 	    endTransform: Cesium.Matrix4.IDENTITY
 	});	
-
+	*/
 
 	scene.globe.depthTestAgainstTerrain = true;
 	
-	/*
+	
 	
 	var layers = scene.imageryLayers;
 	scene.highDynamicRange = false;
@@ -105,7 +106,7 @@
 	scene.pickTranslucentDepth = true;
 	scene.useDepthPicking = true;
 	
-	let eventHandler = new Cesium.ScreenSpaceEventHandler( scene.canvas );
+
 
 	$( window ).resize(function() {
 	  //doTheJob();
@@ -120,16 +121,13 @@
 		mapIsMoving = false;
 		//doTheJob();
 	});		
-	*/
+	
 		
 	/*********************************   **********************************************/	
 
 	var tileset = new Cesium.Cesium3DTileset({
 		url: 'pointdata/tileset.json',
-		maximumScreenSpaceError : 8.0,
-		geometricErrorScale : 1.0,
-		maximumAttenuation : 0, 
-		baseResolution : 0, 
+		maximumScreenSpaceError : 18,
 		eyeDomeLightingStrength : 1.0,
 		eyeDomeLightingRadius : 1.0
 		/*
@@ -143,10 +141,10 @@
 		cullWithChildrenBounds : true	  
 		*/
 	});
-    tileset.pointCloudShading.maximumAttenuation = undefined; // Will be based on maximumScreenSpaceError instead
-    tileset.pointCloudShading.baseResolution = undefined;
+    //tileset.pointCloudShading.maximumAttenuation = undefined; // Will be based on maximumScreenSpaceError instead
+    //tileset.pointCloudShading.baseResolution = undefined;
     tileset.pointCloudShading.geometricErrorScale = 1.0;
-    tileset.pointCloudShading.attenuation = true;
+    //tileset.pointCloudShading.attenuation = true;
     tileset.pointCloudShading.eyeDomeLighting = true;
 
 	
@@ -163,6 +161,7 @@
 	});
 	*/
 
+/*
 	tileset.style = new Cesium.Cesium3DTileStyle({
 	  color: {
 		conditions: [
@@ -170,7 +169,7 @@
 		]
 	  }
 	});
-
+*/
 	
 	tileset.readyPromise.then(function(tileset) {
 		console.log('Ok');

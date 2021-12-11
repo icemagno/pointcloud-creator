@@ -32,12 +32,12 @@ public class PntService {
 		config.setMustReproject( false );
 		config.setSeparatorCharacter( " " );
 		config.setColorBitSize( 16 );
-		config.setZScaleFactor( 0.3 );
-		config.setTileSize( 100 );
-		config.setMaxNumOfPointsPerTile( 10000 );
+		config.setZScaleFactor( 0.1 );
+		config.setTileSize( 50 );
+		config.setMaxNumOfPointsPerTile( 800 );
 		config.setOutputFolderPath( "/pointdata" );
 		config.setRefinamentModel( Refine.REPLACE );
-		config.setzOffset( 0 );
+		config.setzOffset( -100 );
 		
 		new File( config.getInputPath() ).mkdirs();
 		new File( config.getOutputFolderPath() ).mkdirs();
