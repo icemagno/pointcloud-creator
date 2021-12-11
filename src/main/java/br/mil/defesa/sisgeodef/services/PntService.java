@@ -33,11 +33,11 @@ public class PntService {
 		config.setSeparatorCharacter( " " );
 		config.setColorBitSize( 16 );
 		config.setZScaleFactor( 0.1 );
-		config.setTileSize( 50 );
-		config.setMaxNumOfPointsPerTile( 800 );
+		config.setTileSize( 255 );
+		config.setMaxNumOfPointsPerTile( 10000 );
 		config.setOutputFolderPath( "/pointdata" );
 		config.setRefinamentModel( Refine.REPLACE );
-		config.setzOffset( -100 );
+		config.setzOffset( -400 );
 		
 		new File( config.getInputPath() ).mkdirs();
 		new File( config.getOutputFolderPath() ).mkdirs();
