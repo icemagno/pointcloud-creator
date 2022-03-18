@@ -222,6 +222,7 @@ public class PntcGenerator {
 		File[] fileList = dataFolder.listFiles();
 		int numberOfFiles = fileList.length;	
 		double minZ = Double.MAX_VALUE;
+		int numPoints = 0;
 		for (int i = 0; i < numberOfFiles; i++) {
 			File fileEntry = fileList[i];
 			String fileEntryPath = fileEntry.getAbsolutePath();			
@@ -229,7 +230,8 @@ public class PntcGenerator {
 			try {		
 				List<PointObject> batchPointList = new ArrayList<PointObject>();
 				br = new BufferedReader(new FileReader(fileEntryPath));
-				String line;				
+				String line;
+				
 				while ((line = br.readLine()) != null) {
 					if (!shouldRun)
 						return;
@@ -238,6 +240,7 @@ public class PntcGenerator {
 					double x = Double.valueOf(valueArray[0]);
 					double y = Double.valueOf(valueArray[1]);
 					double z = (Double.valueOf(valueArray[2]) + config.getzOffset()) * config.getZScaleFactor();
+					
 					
 					/*
 					if( config.getMustReproject() ) {
@@ -263,7 +266,9 @@ public class PntcGenerator {
 						batchPointList = new ArrayList<PointObject>();
 					}
 				}
+				
 				dbManager.importIntoDatabase(batchPointList);
+				numPoints = numPoints + batchPointList.size(); 
 			} catch (NumberFormatException e) {
 				throw new IOException("Invalid coordinate or color value in source files.", e);
 			} catch (IOException e) {
@@ -281,6 +286,7 @@ public class PntcGenerator {
 			Logger.info("Reading " + fileEntry.getName() + ". Remaining files: " +  (numberOfFiles - (i + 1)));
 		}
 		Logger.info("minZ: " + minZ);
+		System.out.println( "Total of points: " + numPoints );
 	}
 	
 	private TileSet generateTileset(BoundingBox2D globalBoundingbox, 
@@ -297,6 +303,8 @@ public class PntcGenerator {
 		int rowNumber = tileBoundingboxes.length;
 		int colNumber = tileBoundingboxes[0].length;
 		int numberOfTiles = rowNumber * colNumber;	
+
+		System.out.println("Rows: " + rowNumber + " Cols: " + colNumber + " Number of tiles: " + numberOfTiles );
 		
 		int maximumNumberOfChildrenTiles = 2;
 		boolean createTileset = false;

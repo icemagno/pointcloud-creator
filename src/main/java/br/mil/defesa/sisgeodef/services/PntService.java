@@ -26,7 +26,7 @@ public class PntService {
 	private void readSourcePointData() {
 		
 		PntcConfig config = new PntcConfig();		
-		config.setInputPath( "/pointsource" ) ;
+		config.setInputPath( "/pointgen/pointsource" ) ;
 		config.setSrid( "2994" );
 		config.setTargetSrid( "4326" );
 		config.setMustReproject( false );
@@ -35,7 +35,7 @@ public class PntService {
 		config.setZScaleFactor( 0.1 );
 		config.setTileSize( 255 );
 		config.setMaxNumOfPointsPerTile( 10000 );
-		config.setOutputFolderPath( "/pointdata" );
+		config.setOutputFolderPath( "/pointgen/pointdata/example" );
 		config.setRefinamentModel( Refine.REPLACE );
 		config.setzOffset( -400 );
 		
